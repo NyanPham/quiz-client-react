@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { User } from '../types'
 
 export type SelectedOption = {
     questionId: number
@@ -9,6 +10,8 @@ export type ContextState = {
     participantId: number
     timeTaken: number
     selectedOptions: SelectedOption[]
+    authToken: string | null,
+    currentUser: User | null,
 }
 
 export type StateContextType = {
@@ -26,6 +29,8 @@ const initialValue = (): ContextState => ({
     participantId: 0,
     timeTaken: 0,
     selectedOptions: [],
+    authToken: null,
+    currentUser: null,
 })
 
 export const useStateContext = () => {

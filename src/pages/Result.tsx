@@ -13,7 +13,7 @@ import {
 import { getFormattedTime } from '../helper'
 import { useNavigate } from 'react-router-dom'
 import { green } from '@mui/material/colors'
-import Answer from './Answer'
+import Answer from '../components/Answer'
 import { QuestionWithAnswer, QuestionWithAnswerAndSelectedOption } from '../types'
 
 const Result = () => {
