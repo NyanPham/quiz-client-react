@@ -5,6 +5,13 @@ export type Question = {
     options: string[];
 };
 
+export type QuestionToCreate = {
+    questionInWords: string;
+    imageName?: string;
+    options: string[];
+    answer: number,
+}
+
 export type SelectedOption = {
     questionId: number;
     selected: number;

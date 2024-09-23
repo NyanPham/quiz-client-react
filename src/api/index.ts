@@ -3,10 +3,16 @@ import axios from 'axios'
 export const BASE_URL = 'http://localhost:5165/'
 
 export const ENDPOINTS = {
+    // Account
     register: 'Account/Register',
     login: 'Account/Login',
+    logout: 'Account/Logout',
     resetPassword: 'Account/ResetPassword',
+    
+    // Participant
     participants: 'Participants',
+
+    // Questions 
     questions: 'Questions',
     answers: 'Questions/Answers',
 }

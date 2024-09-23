@@ -4,6 +4,7 @@ import Result from './pages/Result'
 import Quiz from './pages/Quiz'
 import Layout from './components/Layout'
 import Register from './pages/Register'
+import Admin from './pages/Admin'
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/" element={<Layout />}>
                     <Route path="/quiz" element={<Quiz />} />
                     <Route path="/result" element={<Result />} />
+                    <Route path="/admin" element={<Admin />} />
                 </Route>
             </Routes>
         </BrowserRouter>

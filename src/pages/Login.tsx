@@ -30,12 +30,12 @@ const initialState: FormState = {
 };
 
 const Login = () => {
-    const { context, setContext, resetContext } = useStateContext()
+    const { setContext, resetContext } = useStateContext()
     const navigate = useNavigate()
 
-    const { values, setValues, errors, setErrors, handleInputChange } =
-        useForm<FormState, Errors>(initialState, { email: null, password: null})
-        
+    const { values, errors, setErrors, handleInputChange } =
+        useForm<FormState, Errors>(initialState, { email: null, password: null })
+    
     useEffect(() => {
         resetContext()
     }, [])
@@ -48,12 +48,24 @@ const Login = () => {
         }
 
         try {
-            const res = await createAPIEndpoint(ENDPOINTS.participants).post({
+            const res = await createAPIEndpoint(ENDPOINTS.login).post({
                 email: values.email,
                 password: values.password,
+            })  
+
+            const { id, token, currentUser } = res.data
+
+            setContext({ 
+                participantId: id, 
+                authToken: token, 
+                currentUser: currentUser 
             })
-            setContext({ participantId: res.data.id })
-            navigate('/quiz')
+
+            if (currentUser.role.toLowerCase() === 'admin') {
+                return navigate('/admin')
+            }
+
+            navigate('/quiz')  
         } catch (err) {
             console.log(err)
         }
@@ -75,7 +87,7 @@ const Login = () => {
             <Card sx={{ width: '400px' }}>
                 <CardContent sx={{ textAlign: 'center' }}>
                     <Typography variant="h3" sx={{ my: 3 }}>
-                        Quizz App
+                        Sign in
                     </Typography>
                     <Box
                         sx={{
@@ -113,15 +125,18 @@ const Login = () => {
                                 type="submit"
                                 variant="contained"
                                 size="large"
-                                sx={{ width: '90%' }}
+                                sx={{ width: '90%', mt: 1 }}
                             >
                                 Start
                             </Button>
                         </form>
                     </Box>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2, mb: 1 }} />
                     <Box sx={{ mt: 1 }}>
                         Don't have an account? <Link to="/register" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            Register
+                            <Typography variant="subtitle1" display="inline" sx={{ '&:hover': { textDecoration: 'underline' } }}>
+                                Register
+                            </Typography>
                         </Link>
                     </Box>
                 </CardContent>

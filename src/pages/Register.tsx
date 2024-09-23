@@ -57,13 +57,20 @@ const Register = () => {
                 password: values.password,
                 passwordConfirm: values.passwordConfirm,
             }) 
+
+            const { id, token, currentUser } = res.data
             
             setContext({ 
-                participantId: res.data.id, 
-                authToken: res.data.token, 
-                currentUser: res.data.currentUser 
+                participantId: id, 
+                authToken: token, 
+                currentUser: currentUser 
             })
-            navigate('/quiz')
+
+            if (currentUser.role.toLowerCase() === 'admin') {
+                return navigate('/admin')
+            }
+
+            navigate('/quiz') 
         } catch (err) {
             console.log(err)
         }
@@ -86,7 +93,7 @@ const Register = () => {
             <Card sx={{ width: '400px' }}>
                 <CardContent sx={{ textAlign: 'center' }}>
                     <Typography variant="h3" sx={{ my: 3 }}>
-                        Quizz App
+                        Register
                     </Typography>
                     <Box
                         sx={{
@@ -136,15 +143,18 @@ const Register = () => {
                                 type="submit"
                                 variant="contained"
                                 size="large"
-                                sx={{ width: '90%' }}
+                                sx={{ width: '90%', mt: 1 }}
                             >
                                 Create Account
                             </Button>
                         </form>
                     </Box>  
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2, mb: 1 }} />
                     <Box sx={{ mt: 1 }}>
-                        Don't have an account? <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            Login
+                        Already have an account? <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Typography variant="subtitle1" display="inline" sx={{ '&:hover': { textDecoration: 'underline' } }}>
+                                Login
+                            </Typography>
                         </Link>
                     </Box>
                 </CardContent>
