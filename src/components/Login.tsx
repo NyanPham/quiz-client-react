@@ -11,25 +11,36 @@ import useForm from '../hooks/useForm'
 import { createAPIEndpoint, ENDPOINTS } from '../api'
 import { useStateContext } from '../hooks/useStateContext'
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, FormEvent } from 'react'
 
-const inititalState = {
+// Define types for the initial state, values, and errors
+type FormState = {
+    email: string;
+    name: string;
+};
+
+type Errors = {
+    email: string | null;
+    name: string | null;
+};
+
+const initialState: FormState = {
     email: '',
     name: '',
-}
+};
 
 const Login = () => {
     const { context, setContext, resetContext } = useStateContext()
     const navigate = useNavigate()
 
     const { values, setValues, errors, setErrors, handleInputChange } =
-        useForm(inititalState)
-
+        useForm<FormState, Errors>(initialState, { email: null, name: null})
+        
     useEffect(() => {
         resetContext()
     }, [])
 
-    const login = async (e) => {
+    const login = async (e: FormEvent) => {
         e.preventDefault()
 
         if (!validate()) {
@@ -49,14 +60,14 @@ const Login = () => {
     }
 
     const validate = () => {
-        let temp = {}
-        ;(temp.email = /\S+@\S+\.\S+/.test(values.email)
+        let temp: Errors = { email: null, name: null }
+        temp.email = /\S+@\S+\.\S+/.test(values.email)
             ? null
-            : 'Email is not valid'),
-            (temp.name = values.name ? null : 'Name is required')
+            : 'Email is not valid'
+        temp.name = values.name ? null : 'Name is required'
 
         setErrors(temp)
-        return Object.values(temp).every((x) => x === '' || x == null)
+        return Object.values(temp).every((x) => x === null)
     }
 
     return (

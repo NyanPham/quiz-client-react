@@ -1,6 +1,11 @@
 import { Grid2 } from '@mui/material'
+import { ReactNode } from 'react'
 
-const Center = ({ children }) => {
+type CenterProps = {
+    children: ReactNode
+}
+
+const Center = ({ children }: CenterProps) => {
     return (
         <Grid2
             container
@@ -9,7 +14,7 @@ const Center = ({ children }) => {
             justifyContent={'center'}
             sx={{ minHeight: '100vh' }}
         >
-            <Grid2 xs={1}>{children}</Grid2>
+            <Grid2 component="div">{children}</Grid2>
         </Grid2>
     )
 }

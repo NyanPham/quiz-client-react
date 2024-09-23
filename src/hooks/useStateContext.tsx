@@ -1,19 +1,44 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
-const stateContext = createContext()
+export type SelectedOption = {
+    questionId: number
+    selected: number
+}
 
-const initialValue = () => ({
+export type ContextState = {
+    participantId: number
+    timeTaken: number
+    selectedOptions: SelectedOption[]
+}
+
+export type StateContextType = {
+    context: ContextState
+    setContext: React.Dispatch<React.SetStateAction<ContextState>>
+}
+
+type ContextProviderProps = {
+    children: ReactNode;
+}
+
+const stateContext = createContext<StateContextType | undefined>(undefined);
+
+const initialValue = (): ContextState => ({
     participantId: 0,
     timeTaken: 0,
     selectedOptions: [],
 })
 
 export const useStateContext = () => {
-    const { context, setContext } = useContext(stateContext)
+    const contextValue = useContext(stateContext);
+    if (!contextValue) {
+        throw new Error('useStateContext must be used within a ContextProvider');
+    }
+
+    const { context, setContext } = contextValue;
 
     return {
         context,
-        setContext: (obj) =>
+        setContext: (obj: Partial<ContextState>) =>
             setContext((prevContext) => ({
                 ...prevContext,
                 ...obj,
@@ -38,7 +63,7 @@ const initialContext = () => {
     return initial
 }
 
-export default function ContextProvider({ children }) {
+export default function ContextProvider({ children }: ContextProviderProps) {
     const [context, setContext] = useState(initialContext())
 
     useEffect(() => {

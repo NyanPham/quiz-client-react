@@ -14,27 +14,27 @@ import { getFormattedTime } from '../helper'
 import { useNavigate } from 'react-router-dom'
 import { green } from '@mui/material/colors'
 import Answer from './Answer'
+import { QuestionWithAnswer, QuestionWithAnswerAndSelectedOption } from '../types'
 
 const Result = () => {
     const { context, setContext } = useStateContext()
     const [score, setScore] = useState(0)
-    const [answers, setAnswers] = useState([])
+    const [answers, setAnswers] = useState<QuestionWithAnswerAndSelectedOption[]>([])
     const [showAlert, setShowAlert] = useState(false)
     const navigate = useNavigate()
 
-    const alertTimer = useRef()
+    const alertTimer = useRef<ReturnType<typeof setTimeout> | null>()
 
     useEffect(() => {
         const ids = context.selectedOptions.map((x) => x.questionId)
-        console.log(ids)
 
         const fetchAnswers = async () => {
             try {
                 const res = await createAPIEndpoint(ENDPOINTS.answers).post(ids)
-                const questionsWithAnswers = context.selectedOptions.map(
+                const questionsWithAnswers: QuestionWithAnswerAndSelectedOption[] = context.selectedOptions.map(
                     (x) => ({
                         ...x,
-                        ...res.data.find((y) => y.id === x.questionId),
+                        ...res.data.find((y: QuestionWithAnswer) => y.id === x.questionId),
                     })
                 )
 
@@ -54,7 +54,7 @@ const Result = () => {
         }
     }, [])
 
-    const calculateScore = (answersWithSelected) => {
+    const calculateScore = (answersWithSelected : QuestionWithAnswerAndSelectedOption[]) => {
         const totalScore = answersWithSelected.reduce((total, current) => {
             return current.answer === current.selected ? total + 1 : total
         }, 0)
@@ -116,7 +116,7 @@ const Result = () => {
                         <Typography variant="h4">Congratulations!</Typography>
                         <Typography variant="h6">YOUR SCORE</Typography>
                         <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                            <Typography variant="span" color={green[500]}>
+                            <Typography variant="inherit" color={green[500]}>
                                 {score}
                             </Typography>
                         </Typography>
@@ -139,13 +139,13 @@ const Result = () => {
                         >
                             Re-try
                         </Button>
-                        <Alert
+                        {showAlert && <Alert
                             severity="success"
-                            variant="string"
+                            variant="filled"
                             sx={{ width: '60%', m: 'auto' }}
                         >
                             Score updated
-                        </Alert>
+                        </Alert>}
                     </CardContent>
                 </Box>
                 <CardMedia
