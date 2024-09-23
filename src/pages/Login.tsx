@@ -6,30 +6,41 @@ import {
     CardContent,
     Typography,
 } from '@mui/material'
-import Center from './Center'
+import Center from '../components/Center'
 import useForm from '../hooks/useForm'
 import { createAPIEndpoint, ENDPOINTS } from '../api'
 import { useStateContext } from '../hooks/useStateContext'
-import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, FormEvent } from 'react'
 
-const inititalState = {
+// Define types for the initial state, values, and errors
+type FormState = {
+    email: string;
+    password: string,
+};
+
+type Errors = {
+    email: string | null;
+    password: string | null;
+};
+
+const initialState: FormState = {
     email: '',
-    name: '',
-}
+    password: '',
+};
 
 const Login = () => {
     const { context, setContext, resetContext } = useStateContext()
     const navigate = useNavigate()
 
     const { values, setValues, errors, setErrors, handleInputChange } =
-        useForm(inititalState)
-
+        useForm<FormState, Errors>(initialState, { email: null, password: null})
+        
     useEffect(() => {
         resetContext()
     }, [])
 
-    const login = async (e) => {
+    const login = async (e: FormEvent) => {
         e.preventDefault()
 
         if (!validate()) {
@@ -39,7 +50,7 @@ const Login = () => {
         try {
             const res = await createAPIEndpoint(ENDPOINTS.participants).post({
                 email: values.email,
-                name: values.name,
+                password: values.password,
             })
             setContext({ participantId: res.data.id })
             navigate('/quiz')
@@ -49,14 +60,14 @@ const Login = () => {
     }
 
     const validate = () => {
-        let temp = {}
-        ;(temp.email = /\S+@\S+\.\S+/.test(values.email)
+        let temp: Errors = { email: null, password: null }
+        temp.email = /\S+@\S+\.\S+/.test(values.email)
             ? null
-            : 'Email is not valid'),
-            (temp.name = values.name ? null : 'Name is required')
+            : 'Email is not valid'
+        temp.password = values.password ? null : 'Name is required'
 
         setErrors(temp)
-        return Object.values(temp).every((x) => x === '' || x == null)
+        return Object.values(temp).every((x) => x === null)
     }
 
     return (
@@ -87,14 +98,15 @@ const Login = () => {
                                 })}
                             />
                             <TextField
-                                label="Name"
-                                name="name"
+                                label="Password"
+                                name="password"
                                 variant="outlined"
-                                value={values.name}
+                                type='password'
+                                value={values.password}
                                 onChange={handleInputChange}
-                                {...(errors.name && {
+                                {...(errors.password && {
                                     error: true,
-                                    helperText: errors.name,
+                                    helperText: errors.password,
                                 })}
                             />
                             <Button
@@ -106,6 +118,11 @@ const Login = () => {
                                 Start
                             </Button>
                         </form>
+                    </Box>
+                    <Box sx={{ mt: 1 }}>
+                        Don't have an account? <Link to="/register" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            Register
+                        </Link>
                     </Box>
                 </CardContent>
             </Card>

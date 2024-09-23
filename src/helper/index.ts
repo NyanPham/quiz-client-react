@@ -1,4 +1,4 @@
-export const getFormattedTime = (sec) => {
+export const getFormattedTime = (sec: number) => {
     return (
         Math.floor(sec / 60)
             .toString()

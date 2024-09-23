@@ -1,10 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.jsx'
+import App from './App.js'
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
-import ContextProvider from './hooks/useStateContext.jsx'
-
+import ContextProvider from './hooks/useStateContext.js'
+    
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
@@ -14,7 +14,7 @@ const darkTheme = createTheme({
     },
 })
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <ContextProvider>
             <ThemeProvider theme={darkTheme}>

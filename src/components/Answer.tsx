@@ -12,15 +12,20 @@ import { BASE_URL } from '../api'
 import { useState } from 'react'
 import { green, red, grey } from '@mui/material/colors'
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown'
+import { QuestionWithAnswerAndSelectedOption } from '../types'
 
-const Answer = ({ questionsWithAnswers }) => {
-    const [expanded, setExpanded] = useState(false)
+type AnswerProps = {
+    questionsWithAnswers: QuestionWithAnswerAndSelectedOption[]
+}
 
-    const handleChange = (panel) => (_, isExpanded) => {
+const Answer = ({ questionsWithAnswers }: AnswerProps) => {
+    const [expanded, setExpanded] = useState<boolean | number>(false)
+
+    const handleChange = (panel: number) => (_: any, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : false)
     }
 
-    const markCorrectOrNot = (questionWithAnswer, idx) => {
+    const markCorrectOrNot = (questionWithAnswer: QuestionWithAnswerAndSelectedOption, idx: number) => {
         if (
             [questionWithAnswer.answer, questionWithAnswer.selected].includes(
                 idx
@@ -36,7 +41,7 @@ const Answer = ({ questionsWithAnswers }) => {
             }
         }
     }
-
+    
     return (
         <Box sx={{ mt: 5, width: '100%', maxWidth: 640, mx: 'auto' }}>
             {questionsWithAnswers.map((question, idx) => {
