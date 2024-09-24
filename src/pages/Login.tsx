@@ -15,27 +15,29 @@ import { useEffect, FormEvent } from 'react'
 
 // Define types for the initial state, values, and errors
 type FormState = {
-    email: string;
-    password: string,
-};
+    email: string
+    password: string
+}
 
 type Errors = {
-    email: string | null;
-    password: string | null;
-};
+    email: string | null
+    password: string | null
+}
 
 const initialState: FormState = {
     email: '',
     password: '',
-};
+}
 
 const Login = () => {
     const { setContext, resetContext } = useStateContext()
     const navigate = useNavigate()
 
-    const { values, errors, setErrors, handleInputChange } =
-        useForm<FormState, Errors>(initialState, { email: null, password: null })
-    
+    const { values, errors, setErrors, handleInputChange } = useForm<
+        FormState,
+        Errors
+    >(initialState, { email: null, password: null })
+
     useEffect(() => {
         resetContext()
     }, [])
@@ -51,21 +53,21 @@ const Login = () => {
             const res = await createAPIEndpoint(ENDPOINTS.login).post({
                 email: values.email,
                 password: values.password,
-            })  
+            })
 
             const { id, token, currentUser } = res.data
 
-            setContext({ 
-                participantId: id, 
-                authToken: token, 
-                currentUser: currentUser 
+            setContext({
+                participantId: id,
+                authToken: token,
+                currentUser: currentUser,
             })
 
             if (currentUser.role.toLowerCase() === 'admin') {
                 return navigate('/admin')
             }
 
-            navigate('/quiz')  
+            navigate('/quiz')
         } catch (err) {
             console.log(err)
         }
@@ -113,7 +115,7 @@ const Login = () => {
                                 label="Password"
                                 name="password"
                                 variant="outlined"
-                                type='password'
+                                type="password"
                                 value={values.password}
                                 onChange={handleInputChange}
                                 {...(errors.password && {
@@ -131,10 +133,27 @@ const Login = () => {
                             </Button>
                         </form>
                     </Box>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2, mb: 1 }} />
+                    <Box
+                        sx={{
+                            borderBottom: 1,
+                            borderColor: 'divider',
+                            mt: 2,
+                            mb: 1,
+                        }}
+                    />
                     <Box sx={{ mt: 1 }}>
-                        Don't have an account? <Link to="/register" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <Typography variant="subtitle1" display="inline" sx={{ '&:hover': { textDecoration: 'underline' } }}>
+                        Don't have an account?{' '}
+                        <Link
+                            to="/register"
+                            style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                            <Typography
+                                variant="subtitle1"
+                                display="inline"
+                                sx={{
+                                    '&:hover': { textDecoration: 'underline' },
+                                }}
+                            >
                                 Register
                             </Typography>
                         </Link>
