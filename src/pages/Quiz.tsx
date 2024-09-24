@@ -15,7 +15,7 @@ import { getFormattedTime } from '../helper'
 import { useStateContext } from '../hooks/useStateContext'
 import { useNavigate } from 'react-router-dom'
 import { Question } from '../types'
-    
+
 const Quiz = () => {
     const [questions, setQuestions] = useState<Question[]>([])
     const [questionIndex, setQuestionIndex] = useState<number>(0)
@@ -60,7 +60,7 @@ const Quiz = () => {
 
     const updateAnswer = (questionId: number, optionIndex: number) => {
         const selectedOptions = [...context.selectedOptions]
-            
+
         selectedOptions.push({
             questionId,
             selected: optionIndex,

@@ -7,7 +7,7 @@ export type Question = {
 
 export type QuestionToCreate = {
     questionInWords: string;
-    imageName?: string;
+    image: File | null;
     options: string[];
     answer: number,
 }

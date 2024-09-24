@@ -1,152 +1,78 @@
-import { useNavigate } from "react-router-dom"
-import { useStateContext } from "../hooks/useStateContext"
-import { useEffect, useRef, useState } from "react"
-import { QuestionToCreate } from "../types"
-import { Box, Button, TextField } from "@mui/material"
-import AddCircleOutline from "@mui/icons-material/AddCircleOutline"
-import DeleteOutline from "@mui/icons-material/DeleteOutline"
+import {
+    AppBar,
+    Button,
+    Container,
+    Tab,
+    Tabs,
+    Toolbar,
+    Typography,
+} from '@mui/material'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
+import { useStateContext } from '../hooks/useStateContext'
+import { createAPIEndpoint, ENDPOINTS } from '../api'
+import { useState, useEffect } from 'react'
 
 type AdminProps = {}
 
 const Admin = ({}: AdminProps) => {
-    const { context, setContext } = useStateContext()
-    const currentUser = context.currentUser
+    const location = useLocation()
     const navigate = useNavigate()
+    const { context, resetContext } = useStateContext()
 
-    const [question, setQuestion] = useState<QuestionToCreate>({
-        questionInWords: '',
-        imageName: '',
-        options: [],
-        answer: 0,
-    })        
-
-    const [optionCount, setOptionCount] = useState<number>(1)
-
-    const navigateTimer = useRef<ReturnType<typeof setTimeout> | null>()
+    const [currentTab, setCurrentTab] = useState(0)
 
     useEffect(() => {
-        if (currentUser?.role.toLowerCase() !== 'admin') {
-            if (navigateTimer.current) {
-                clearTimeout(navigateTimer.current)
-            }
-    
-            navigateTimer.current = setTimeout(() => {
-                navigate("/")
-            }, 3000)
-        }  
-            
-        return () => {
-            if (navigateTimer.current) {
-                clearTimeout(navigateTimer.current)
-            }
+        if (location.pathname.includes('editQuestion')) {
+            setCurrentTab(1)
+        } else {
+            setCurrentTab(0)
         }
-    }, [])
-                        
-    if (currentUser?.role.toLowerCase() !== 'admin') {
-        return <div>Unauthorized</div>
-    }       
-    
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        console.log(question)
-    }           
+    }, [location.pathname])
+
+    const logout = async () => {
+        try {
+            await createAPIEndpoint(ENDPOINTS.logout).post({
+                currentUser: context.currentUser,
+            })
+            resetContext()
+            navigate('/')
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setCurrentTab(newValue)
+        if (newValue === 0) {
+            navigate('/admin')
+        } else if (newValue === 1) {
+            navigate('/admin/editQuestion')
+        }
+    }
 
     return (
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="questionInWords"
-                label="Question In Words"
-                name="questionInWords"
-                autoComplete="questionInWords"
-                value={question.questionInWords}
-                onChange={(e) => setQuestion(prevQuestion => ({ ...prevQuestion, questionInWords: e.target.value }))}
-            />
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="imageName"
-                label="Image Name"
-                name="imageName"
-                autoComplete="imageName"
-                value={question.imageName}
-                onChange={(e) => setQuestion(prevQuestion => ({ ...prevQuestion, imageName: e.target.value }))}
-            />
-            {Array.from({ length: optionCount }).map((_, idx) => (
-                <Box key={idx} sx={{ display: 'flex', alignItems: 'center' }}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id={`option${idx + 1}`}
-                        label={`Option ${idx + 1}`}
-                        name={`option${idx + 1}`}
-                        autoComplete={`option${idx + 1}`}
-                        value={question.options[idx] || ''}
-                        onChange={(e) => {
-                                setQuestion(prevQuestion => {
-                                    const newOptions = [...prevQuestion.options]
-                                    newOptions[idx] = e.target.value
-                                    
-                                    return {
-                                        ...prevQuestion,
-                                        options: newOptions,
-                                    }
-                                })
-                            }
-                        }
-                    />  
-                    {optionCount > 1 && (
-                        <Button
-                            type="button"
-                            onClick={() => {
-                                setQuestion(prevQuestion => ({
-                                    ...prevQuestion,
-                                    options: prevQuestion.options.filter((_, optionIdx) => idx !== optionIdx),
-                                }));
-                                setOptionCount((prev) => prev - 1);
-                            }}
-                            variant="contained"
-                            color="error"
-                            sx={{ ml: 1, maxWidth: 'max-content' }}
-                            startIcon={<DeleteOutline />}
-                        />
-                    )}
-                </Box>
-            ))}
-            <Button
-                type="button"
-                onClick={() => setOptionCount((prev) => prev + 1)}
-                variant="contained"
-                startIcon={<AddCircleOutline />}
-                sx={{ mt: 2 }}
-            >
-                Add Option
-            </Button>
-            <TextField
-                type="number"
-                margin="normal"
-                required
-                fullWidth
-                id="answer"
-                label="Answer"
-                name="answer"
-                autoComplete="answer"
-                value={question.answer}
-                onChange={(e) => setQuestion(prevQuestion => ({ ...prevQuestion, answer: parseInt(e.target.value) }))}
-            />
-            <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-            >
-                Create Question
-            </Button>
-        </Box>
+        <>
+            <AppBar position="sticky">
+                <Toolbar sx={{ width: 540, m: 'auto' }}>
+                    <Typography
+                        variant="h4"
+                        align="center"
+                        sx={{ flexGrow: 1 }}
+                    >
+                        Quiz App Admin
+                    </Typography>
+                    <Button onClick={logout}>Logout</Button>
+                </Toolbar>
+            </AppBar>
+
+            <Container>
+                <Tabs value={currentTab} onChange={handleTabChange} centered>
+                    <Tab label="Create Question" />
+                    <Tab label="Edit Question" />
+                </Tabs>
+                <Outlet />
+            </Container>
+        </>
     )
 }
 
