@@ -71,11 +71,9 @@ const CreateQuestion = () => {
 
         const formData = new FormData()
         formData.append('QuestionInWords', question.questionInWords)
-        for (let i = 0; i < 4; i++) {
-            const option = question.options[i] || ''
-            formData.append(`Option${i + 1}`, option)
-        }
+        formData.append('Options', question.options)
         formData.append('Answer', question.answer.toString())
+
         if (question.image != null) {
             formData.append('Image', question.image)
         }

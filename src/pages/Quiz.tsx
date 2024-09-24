@@ -38,10 +38,11 @@ const Quiz = () => {
             timeTaken: 0,
             selectedOptions: [],
         })
-
+            
         const fetchQuestions = async () => {
             try {
                 const res = await createAPIEndpoint(ENDPOINTS.questions).fetch()
+                console.log(res)
                 setQuestions(res.data)
                 startTimer()
             } catch (error) {
