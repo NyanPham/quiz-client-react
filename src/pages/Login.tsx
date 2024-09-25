@@ -63,7 +63,11 @@ const Login = () => {
                 currentUser: currentUser,
             })
 
-            if (currentUser.role.toLowerCase() === 'admin') {
+            if (
+                currentUser.roles.some(
+                    (role: string) => role.toLowerCase() === 'admin'
+                )
+            ) {
                 return navigate('/admin')
             }
 

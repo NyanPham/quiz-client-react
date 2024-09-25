@@ -28,5 +28,5 @@ export type QuestionWithAnswerAndSelectedOption = QuestionWithAnswer & {
 export type User = {
     email: string,
     username: string,
-    role: string,
+    roles: string[],
 };

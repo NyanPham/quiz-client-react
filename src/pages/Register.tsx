@@ -1,4 +1,4 @@
-import jwtDecode from 'jwt-decode';
+import jwtDecode from 'jwt-decode'
 import {
     TextField,
     Button,
@@ -25,20 +25,22 @@ type Errors = {
     email: string | null
     password: string | null
     passwordConfirm: string | null
-};
+}
 
 const initialState: FormState = {
     email: '',
     password: '',
     passwordConfirm: '',
-};
+}
 
 const Register = () => {
     const { context, setContext, resetContext } = useStateContext()
     const navigate = useNavigate()
 
-    const { values, setValues, errors, setErrors, handleInputChange } =
-        useForm<FormState, Errors>(initialState, { email: null, password: null, passwordConfirm: null })
+    const { values, setValues, errors, setErrors, handleInputChange } = useForm<
+        FormState,
+        Errors
+    >(initialState, { email: null, password: null, passwordConfirm: null })
 
     useEffect(() => {
         resetContext()
@@ -56,33 +58,45 @@ const Register = () => {
                 email: values.email,
                 password: values.password,
                 passwordConfirm: values.passwordConfirm,
-            }) 
-
-            const { id, token, currentUser } = res.data
-            
-            setContext({ 
-                participantId: id, 
-                authToken: token, 
-                currentUser: currentUser 
             })
 
-            if (currentUser.role.toLowerCase() === 'admin') {
+            const { id, token, currentUser } = res.data
+
+            setContext({
+                participantId: id,
+                authToken: token,
+                currentUser: currentUser,
+            })
+
+            if (
+                currentUser.roles.some(
+                    (role: string) => role.toLowerCase() === 'admin'
+                )
+            ) {
                 return navigate('/admin')
             }
 
-            navigate('/quiz') 
+            navigate('/quiz')
         } catch (err) {
             console.log(err)
         }
     }
 
     const validate = () => {
-        let temp: Errors = { email: null, password: null, passwordConfirm: null }
+        let temp: Errors = {
+            email: null,
+            password: null,
+            passwordConfirm: null,
+        }
         temp.email = /\S+@\S+\.\S+/.test(values.email)
             ? null
             : 'Email is not valid'
         temp.password = values.password ? null : 'Password is required'
-        temp.passwordConfirm = values.password != null && values.password !== values.passwordConfirm ? 'Passwords do not match' : null
+        temp.passwordConfirm =
+            values.password != null &&
+            values.password !== values.passwordConfirm
+                ? 'Passwords do not match'
+                : null
 
         setErrors(temp)
         return Object.values(temp).every((x) => x === null)
@@ -102,7 +116,7 @@ const Register = () => {
                                 width: '90%',
                             },
                         }}
-                    >   
+                    >
                         <form noValidate autoComplete="off" onSubmit={register}>
                             <TextField
                                 label="Email"
@@ -119,7 +133,7 @@ const Register = () => {
                                 label="Password"
                                 name="password"
                                 variant="outlined"
-                                type='password'
+                                type="password"
                                 value={values.password}
                                 onChange={handleInputChange}
                                 {...(errors.password && {
@@ -131,7 +145,7 @@ const Register = () => {
                                 label="Password Confirm"
                                 name="passwordConfirm"
                                 variant="outlined"
-                                type='password'
+                                type="password"
                                 value={values.passwordConfirm}
                                 onChange={handleInputChange}
                                 {...(errors.passwordConfirm && {
@@ -148,11 +162,28 @@ const Register = () => {
                                 Create Account
                             </Button>
                         </form>
-                    </Box>  
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2, mb: 1 }} />
+                    </Box>
+                    <Box
+                        sx={{
+                            borderBottom: 1,
+                            borderColor: 'divider',
+                            mt: 2,
+                            mb: 1,
+                        }}
+                    />
                     <Box sx={{ mt: 1 }}>
-                        Already have an account? <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <Typography variant="subtitle1" display="inline" sx={{ '&:hover': { textDecoration: 'underline' } }}>
+                        Already have an account?{' '}
+                        <Link
+                            to="/"
+                            style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                            <Typography
+                                variant="subtitle1"
+                                display="inline"
+                                sx={{
+                                    '&:hover': { textDecoration: 'underline' },
+                                }}
+                            >
                                 Login
                             </Typography>
                         </Link>
