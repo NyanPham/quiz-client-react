@@ -14,12 +14,17 @@ import { getFormattedTime } from '../helper'
 import { useNavigate } from 'react-router-dom'
 import { green } from '@mui/material/colors'
 import Answer from '../components/Answer'
-import { QuestionWithAnswer, QuestionWithAnswerAndSelectedOption } from '../types'
+import {
+    QuestionWithAnswer,
+    QuestionWithAnswerAndSelectedOption,
+} from '../types'
 
 const Result = () => {
     const { context, setContext } = useStateContext()
     const [score, setScore] = useState(0)
-    const [answers, setAnswers] = useState<QuestionWithAnswerAndSelectedOption[]>([])
+    const [answers, setAnswers] = useState<
+        QuestionWithAnswerAndSelectedOption[]
+    >([])
     const [showAlert, setShowAlert] = useState(false)
     const navigate = useNavigate()
 
@@ -31,12 +36,13 @@ const Result = () => {
         const fetchAnswers = async () => {
             try {
                 const res = await createAPIEndpoint(ENDPOINTS.answers).post(ids)
-                const questionsWithAnswers: QuestionWithAnswerAndSelectedOption[] = context.selectedOptions.map(
-                    (x) => ({
+                const questionsWithAnswers: QuestionWithAnswerAndSelectedOption[] =
+                    context.selectedOptions.map((x) => ({
                         ...x,
-                        ...res.data.find((y: QuestionWithAnswer) => y.id === x.questionId),
-                    })
-                )
+                        ...res.data.find(
+                            (y: QuestionWithAnswer) => y.id === x.questionId
+                        ),
+                    }))
 
                 setAnswers(questionsWithAnswers)
                 calculateScore(questionsWithAnswers)
@@ -54,7 +60,9 @@ const Result = () => {
         }
     }, [])
 
-    const calculateScore = (answersWithSelected : QuestionWithAnswerAndSelectedOption[]) => {
+    const calculateScore = (
+        answersWithSelected: QuestionWithAnswerAndSelectedOption[]
+    ) => {
         const totalScore = answersWithSelected.reduce((total, current) => {
             return current.answer === current.selected ? total + 1 : total
         }, 0)
@@ -139,13 +147,15 @@ const Result = () => {
                         >
                             Re-try
                         </Button>
-                        {showAlert && <Alert
-                            severity="success"
-                            variant="filled"
-                            sx={{ width: '60%', m: 'auto' }}
-                        >
-                            Score updated
-                        </Alert>}
+                        {showAlert && (
+                            <Alert
+                                severity="success"
+                                variant="filled"
+                                sx={{ width: '60%', m: 'auto' }}
+                            >
+                                Score updated
+                            </Alert>
+                        )}
                     </CardContent>
                 </Box>
                 <CardMedia

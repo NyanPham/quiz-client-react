@@ -55,12 +55,12 @@ const Login = () => {
                 password: values.password,
             })
 
-            const { id, token, currentUser } = res.data
+            const { participantId, token, currentUser } = res.data
 
             setContext({
-                participantId: id,
                 authToken: token,
-                currentUser: currentUser,
+                currentUser,
+                participantId,
             })
 
             if (

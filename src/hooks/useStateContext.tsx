@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import {
+    createContext,
+    ReactNode,
+    useContext,
+    useEffect,
+    useState,
+} from 'react'
 import { User } from '../types'
 
 export type SelectedOption = {
@@ -10,8 +16,8 @@ export type ContextState = {
     participantId: number
     timeTaken: number
     selectedOptions: SelectedOption[]
-    authToken: string | null,
-    currentUser: User | null,
+    authToken: string | null
+    currentUser: User | null
 }
 
 export type StateContextType = {
@@ -20,10 +26,10 @@ export type StateContextType = {
 }
 
 type ContextProviderProps = {
-    children: ReactNode;
+    children: ReactNode
 }
 
-const stateContext = createContext<StateContextType | undefined>(undefined);
+const stateContext = createContext<StateContextType | undefined>(undefined)
 
 const initialValue = (): ContextState => ({
     participantId: 0,
@@ -34,12 +40,12 @@ const initialValue = (): ContextState => ({
 })
 
 export const useStateContext = () => {
-    const contextValue = useContext(stateContext);
+    const contextValue = useContext(stateContext)
     if (!contextValue) {
-        throw new Error('useStateContext must be used within a ContextProvider');
+        throw new Error('useStateContext must be used within a ContextProvider')
     }
 
-    const { context, setContext } = contextValue;
+    const { context, setContext } = contextValue
 
     return {
         context,

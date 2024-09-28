@@ -26,6 +26,7 @@ export type QuestionWithAnswerAndSelectedOption = QuestionWithAnswer & {
 };
 
 export type User = {
+    participantId: number | string,
     email: string,
     username: string,
     roles: string[],
