@@ -55,15 +55,19 @@ const Login = () => {
                 password: values.password,
             })
 
-            const { id, token, currentUser } = res.data
+            const { participantId, token, currentUser } = res.data
 
             setContext({
-                participantId: id,
                 authToken: token,
-                currentUser: currentUser,
+                currentUser,
+                participantId,
             })
 
-            if (currentUser.role.toLowerCase() === 'admin') {
+            if (
+                currentUser.roles.some(
+                    (role: string) => role.toLowerCase() === 'admin'
+                )
+            ) {
                 return navigate('/admin')
             }
 

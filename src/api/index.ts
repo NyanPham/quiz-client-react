@@ -20,11 +20,19 @@ export const ENDPOINTS = {
 export const createAPIEndpoint = (endpoint: string) => {
     let url = `${BASE_URL}api/${endpoint}/`
 
-    return {
+    const apiEndpoint = {
         fetch: () => axios.get(url),
         fetchById: (id: string | number) => axios.get(url + id),
         post: (newRecord: any) => axios.post(url, newRecord),
         put: (id: string | number, updatedRecord: any) => axios.put(url + id, updatedRecord),
         delete: (id: string | number) => axios.delete(url + id),
-    }
+    };
+    
+    return {
+        ...apiEndpoint,
+        withAuth: (token: string) => {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            return apiEndpoint;
+        }
+    };
 }

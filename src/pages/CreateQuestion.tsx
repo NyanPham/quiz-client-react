@@ -22,8 +22,9 @@ type Errors = {
 }
 
 const CreateQuestion = () => {
-    const { context, setContext } = useStateContext()
-    const currentUser = context.currentUser
+    const {
+        context: { currentUser, authToken },
+    } = useStateContext()
     const navigate = useNavigate()
 
     const {
@@ -43,7 +44,12 @@ const CreateQuestion = () => {
     const navigateTimer = useRef<ReturnType<typeof setTimeout> | null>()
 
     useEffect(() => {
-        if (currentUser?.role.toLowerCase() !== 'admin') {
+        if (
+            currentUser?.roles.every(
+                (role) => role.toLowerCase() !== 'admin'
+            ) ||
+            authToken == null
+        ) {
             if (navigateTimer.current) {
                 clearTimeout(navigateTimer.current)
             }
@@ -60,7 +66,10 @@ const CreateQuestion = () => {
         }
     }, [])
 
-    if (currentUser?.role.toLowerCase() !== 'admin') {
+    if (
+        currentUser?.roles.every((role) => role.toLowerCase() !== 'admin') ||
+        authToken == null
+    ) {
         return <div>Unauthorized</div>
     }
 
@@ -70,12 +79,24 @@ const CreateQuestion = () => {
         if (!validate()) return
 
         const formData = new FormData()
+
         formData.append('QuestionInWords', question.questionInWords)
-        formData.append('Options', question.options)
+        formData.append(
+            'Options',
+            question.options.join('**OPTION_DELIMITER**')
+        )
         formData.append('Answer', question.answer.toString())
 
         if (question.image != null) {
             formData.append('Image', question.image)
+        }
+
+        try {
+            const res = await createAPIEndpoint(ENDPOINTS.questions)
+                .withAuth(authToken)
+                .post(formData)
+        } catch (err) {
+            // Handle error
         }
 
         try {
